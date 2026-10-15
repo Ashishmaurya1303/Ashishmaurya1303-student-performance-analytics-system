@@ -38,6 +38,7 @@ def _resolve_writable_csv_path(base_csv: Path) -> Path:
         os.environ.get("VERCEL")
         or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
         or os.environ.get("VERCEL_ENV")
+        or "/var/task" in str(base_csv)
     )
     if is_serverless:
         tmp_csv = Path(tempfile.gettempdir()) / "students.csv"
@@ -54,7 +55,7 @@ def _resolve_writable_csv_path(base_csv: Path) -> Path:
             with open(base_csv, "a"):
                 pass
         return base_csv
-    except (OSError, PermissionError):
+    except Exception:
         tmp_csv = Path(tempfile.gettempdir()) / "students.csv"
         if not tmp_csv.exists() and base_csv.exists():
             try:
@@ -365,9 +366,12 @@ def create_app(custom_csv_path: Optional[Path] = None) -> Flask:
         ]
         save_df = raw_df[raw_columns].copy()
         try:
+            # If path is in read-only /var/task or Vercel, immediately use /tmp
+            if "/var/task" in str(csv_path) or os.environ.get("VERCEL"):
+                raise OSError("Vercel Serverless environment: /var/task is read-only")
             save_df.to_csv(csv_path, index=False)
-        except (OSError, PermissionError):
-            # Fallback for Vercel/AWS Lambda read-only filesystem
+        except Exception:
+            # Universal fallback for Vercel/AWS Lambda read-only filesystem
             tmp_csv = Path(tempfile.gettempdir()) / "students.csv"
             save_df.to_csv(tmp_csv, index=False)
             app.config["CSV_PATH"] = tmp_csv

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student Performance Analytics Dashboard powered by Python, Pandas, and NumPy.">
+  <title>Student Performance Analytics Dashboard</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Global App Shell -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h2>EduAnalytics</h2>
+          <span class="brand-tag">Python & Pandas AI</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#overview-section" class="nav-item active" id="nav-overview">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Overview</span>
+        </a>
+        <a href="#analytics-section" class="nav-item" id="nav-analytics">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Visualizations</span>
+        </a>
+        <a href="#honor-section" class="nav-item" id="nav-honor">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          <span>Honor Roll</span>
+        </a>
+        <a href="#students-section" class="nav-item" id="nav-students">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Student Records</span>
+        </a>
+        <a href="#advisory-section" class="nav-item" id="nav-advisory">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Attendance Alert</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="engine-badge">
+          <div class="status-pulse"></div>
+          <div>
+            <div class="engine-title">Analytics Engine</div>
+            <div class="engine-desc">Python 3.12 + Pandas</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Application Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="mobile-toggle-btn" id="mobile-toggle" aria-label="Toggle menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div>
+            <h1 class="header-title">Student Performance Analytics</h1>
+            <p class="header-subtitle">Cohort Academic Performance, Grading & Attendance Intelligence</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="status-chip" id="data-status-chip">
+            <span class="chip-dot"></span>
+            <span id="status-text">Connecting...</span>
+          </div>
+          <button class="btn btn-primary" id="add-student-btn" title="Add a new student record">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add Student</span>
+          </button>
+          <button class="btn btn-secondary" id="refresh-btn" title="Reload fresh data from Python Backend">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Alert / Notification Container -->
+      <div id="global-alert-container"></div>
+
+      <!-- Section A: Overview & KPI Summary Cards -->
+      <section class="dashboard-section" id="overview-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Executive Summary</h2>
+            <p class="section-desc">Key performance indicators computed live by existing Pandas analytics</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <!-- Card 1: Total Enrolled -->
+          <div class="kpi-card" id="card-total-students">
+            <div class="kpi-header">
+              <span class="kpi-label">Total Enrolled</span>
+              <div class="kpi-icon icon-blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total">--</div>
+            <div class="kpi-subtext">Verified dataset records</div>
+          </div>
+
+          <!-- Card 2: Passed Students -->
+          <div class="kpi-card" id="card-passed-students">
+            <div class="kpi-header">
+              <span class="kpi-label">Passed Students</span>
+              <div class="kpi-icon icon-emerald">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value color-emerald" id="kpi-passed">--</div>
+            <div class="kpi-subtext">Pass Rate: <strong id="kpi-passed-rate">--%</strong> (All subjects &ge; 40)</div>
+          </div>
+
+          <!-- Card 3: Failed Students -->
+          <div class="kpi-card" id="card-failed-students">
+            <div class="kpi-header">
+              <span class="kpi-label">Academic Failures</span>
+              <div class="kpi-icon icon-rose">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value color-rose" id="kpi-failed">--</div>
+            <div class="kpi-subtext">Fail Rate: <strong id="kpi-failed-rate">--%</strong> (Subject score &lt; 40)</div>
+          </div>
+
+          <!-- Card 4: Class Average -->
+          <div class="kpi-card" id="card-class-average">
+            <div class="kpi-header">
+              <span class="kpi-label">Class Average</span>
+              <div class="kpi-icon icon-indigo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value color-indigo" id="kpi-avg">--%</div>
+            <div class="kpi-subtext">Aggregated cohort mean score</div>
+          </div>
+
+          <!-- Card 5: Attendance Shortages -->
+          <div class="kpi-card" id="card-attendance-shortage">
+            <div class="kpi-header">
+              <span class="kpi-label">Attendance Shortages</span>
+              <div class="kpi-icon icon-amber">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value color-amber" id="kpi-shortages">--</div>
+            <div class="kpi-subtext">Flagged students (<strong id="kpi-shortages-rate">--%</strong> &lt; 75% attendance)</div>
+          </div>
+
+          <!-- Card 6: Highest Performer -->
+          <div class="kpi-card" id="card-highest-performer">
+            <div class="kpi-header">
+              <span class="kpi-label">Top Performer</span>
+              <div class="kpi-icon icon-purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value font-compact" id="kpi-top-name">--</div>
+            <div class="kpi-subtext" id="kpi-top-detail">Score: -- | Grade: --</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section B: Performance Visualizations (Chart.js) -->
+      <section class="dashboard-section" id="analytics-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Cohort Visualizations & Comparative Analytics</h2>
+            <p class="section-desc">Interactive charts generated directly from existing NumPy and Pandas metrics</p>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <!-- Chart 1: Subject-wise Averages -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Subject-Wise Class Averages (%)</h3>
+              <span class="badge badge-info">3 Core Subjects</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chart-subject-averages" aria-label="Subject averages chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Academic Outcomes (Pass vs Fail) -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Academic Outcomes Distribution</h3>
+              <span class="badge badge-neutral">Cohort Pass vs Fail</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chart-outcomes" aria-label="Pass fail distribution chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3: Department Performance Comparison -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Department-Wise Average Performance</h3>
+              <span class="badge badge-info">Cross-Department Mean</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chart-departments" aria-label="Department comparison chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 4: 7-Tier Grade Distribution -->
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>Grade Distribution (7-Tier Academic Scale)</h3>
+              <span class="badge badge-neutral">A+ to F</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="chart-grades" aria-label="Grade distribution chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section C: Honor Roll & Cohort Extremes -->
+      <section class="dashboard-section" id="honor-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Honor Roll & Cohort Extremes</h2>
+            <p class="section-desc">Deterministic top 3 rank calculations and highest/lowest performers</p>
+          </div>
+        </div>
+
+        <div class="extremes-grid">
+          <!-- Top 3 Honor Roll -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title-with-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="color-purple"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <h3>Top 3 Performing Students (Honor Roll)</h3>
+              </div>
+              <span class="badge badge-purple">Deterministic Tie-Breaking</span>
+            </div>
+            <div class="honor-roll-list" id="honor-roll-container">
+              <!-- Rendered via JavaScript -->
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line"></div>
+            </div>
+          </div>
+
+          <!-- Class Extremes Spotlight -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title-with-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="color-indigo"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+                <h3>Class Extremes Spotlight</h3>
+              </div>
+              <span class="badge badge-neutral">Highest &amp; Lowest</span>
+            </div>
+
+            <div class="extremes-spotlight">
+              <div class="extreme-box extreme-highest">
+                <div class="extreme-badge highest-tag">Highest Performer</div>
+                <div id="highest-performers-content">
+                  <div class="skeleton-line"></div>
+                </div>
+              </div>
+
+              <div class="extreme-box extreme-lowest">
+                <div class="extreme-badge lowest-tag">Lowest Performer</div>
+                <div id="lowest-performers-content">
+                  <div class="skeleton-line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Attendance Shortage Advisory -->
+      <section class="dashboard-section" id="advisory-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Attendance Shortage Advisory</h2>
+            <p class="section-desc">Students flagged with &lt; 75.0% attendance requiring departmental intervention</p>
+          </div>
+        </div>
+
+        <div class="panel-card advisory-card">
+          <div class="advisory-banner">
+            <div class="advisory-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+              <h4>Official Attendance Requirement: 75.0% Minimum</h4>
+              <p>Students listed below have an attendance deficit and are highlighted for faculty advisory meetings according to institutional guidelines.</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="shortage-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Student Name</th>
+                  <th>Department</th>
+                  <th>Attendance %</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="shortage-table-body">
+                <tr><td colspan="5" class="text-center text-muted">Loading attendance shortages...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section E: Master Student Records Table -->
+      <section class="dashboard-section" id="students-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Master Student Records</h2>
+            <p class="section-desc">Complete cohort roster with live search, department filtering, sorting, and pagination</p>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <!-- Filter and Search Toolbar -->
+          <div class="table-toolbar">
+            <!-- Search Box -->
+            <div class="search-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="student-search-input" placeholder="Search by Student ID or Name..." aria-label="Search students">
+              <button class="clear-search-btn" id="clear-search" style="display:none;" title="Clear search">&times;</button>
+            </div>
+
+            <div class="toolbar-filters">
+              <!-- Department Filter -->
+              <div class="filter-group">
+                <label for="dept-filter">Department:</label>
+                <select id="dept-filter" class="form-select">
+                  <option value="all">All Departments</option>
+                  <!-- Populated dynamically via JS -->
+                </select>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="filter-group">
+                <label for="status-filter">Academic Status:</label>
+                <select id="status-filter" class="form-select">
+                  <option value="all">All Statuses</option>
+                  <option value="pass">Passed Only</option>
+                  <option value="fail">Failed Only</option>
+                  <option value="shortage">Attendance Shortage</option>
+                </select>
+              </div>
+
+              <!-- Page Size -->
+              <div class="filter-group">
+                <label for="page-size-select">Show:</label>
+                <select id="page-size-select" class="form-select select-compact">
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">All</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="table-responsive">
+            <table class="data-table" id="master-student-table">
+              <thead>
+                <tr>
+                  <th data-sort="student_id" class="sortable">
+                    <span>ID</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="student_name" class="sortable">
+                    <span>Student Name</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="department" class="sortable">
+                    <span>Department</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="math_marks" class="sortable text-right">
+                    <span>Math</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="python_marks" class="sortable text-right">
+                    <span>Python</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="data_science_marks" class="sortable text-right">
+                    <span>DS</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="total_marks" class="sortable text-right">
+                    <span>Total</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="average_marks" class="sortable text-right">
+                    <span>Avg %</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="grade" class="sortable text-center">
+                    <span>Grade</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="status" class="sortable text-center">
+                    <span>Status</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th data-sort="attendance_pct" class="sortable text-right">
+                    <span>Att %</span>
+                    <span class="sort-icon">&updownarrow;</span>
+                  </th>
+                  <th class="text-center">Att Stat</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="student-table-body">
+                <!-- Dynamically populated rows -->
+                <tr><td colspan="13" class="text-center py-4">Loading student records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Footer & Pagination -->
+          <div class="table-footer">
+            <div class="table-stats" id="table-stats-info">
+              Showing records...
+            </div>
+            <div class="pagination-controls" id="pagination-container">
+              <!-- Dynamically populated buttons -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Info -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <p><strong>Student Performance Analytics System</strong> &bull; Python with AI Project</p>
+          <p class="footer-meta">Backend powered by Python 3.12, Pandas & NumPy &bull; Responsive Dashboard Built with HTML5, CSS3, & Vanilla JS</p>
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- Add Student Modal -->
+    <div class="modal-overlay" id="add-student-modal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            Add New Student
+          </h3>
+          <button class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">&times;</button>
+        </div>
+
+        <form id="add-student-form" autocomplete="off">
+          <div class="modal-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="input-student-name">Student Name <span class="required">*</span></label>
+                <input type="text" id="input-student-name" placeholder="e.g. Aarav Sharma" required maxlength="100">
+              </div>
+              <div class="form-group">
+                <label for="input-department">Department <span class="required">*</span></label>
+                <select id="input-department" required>
+                  <option value="" disabled selected>Select Department</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Artificial Intelligence">Artificial Intelligence</option>
+                  <option value="Information Technology">Information Technology</option>
+                  <option value="Data Science">Data Science</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row form-row-4">
+              <div class="form-group">
+                <label for="input-math">Math Marks <span class="required">*</span></label>
+                <input type="number" id="input-math" placeholder="0 - 100" min="0" max="100" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="input-python">Python Marks <span class="required">*</span></label>
+                <input type="number" id="input-python" placeholder="0 - 100" min="0" max="100" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="input-ds">Data Science Marks <span class="required">*</span></label>
+                <input type="number" id="input-ds" placeholder="0 - 100" min="0" max="100" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="input-attendance">Attendance % <span class="required">*</span></label>
+                <input type="number" id="input-attendance" placeholder="0 - 100" min="0" max="100" step="0.1" required>
+              </div>
+            </div>
+
+            <div class="form-error" id="add-form-error" style="display:none;"></div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="modal-submit-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Add Student
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="delete-confirm-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-header modal-header-danger">
+          <h3 class="modal-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            Confirm Deletion
+          </h3>
+          <button class="modal-close-btn" id="delete-modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="delete-confirm-text">Are you sure you want to delete student:</p>
+          <div class="delete-student-info" id="delete-student-info">
+            <strong id="delete-student-name">--</strong>
+            <span class="text-muted" id="delete-student-id">(--)</span>
+          </div>
+          <p class="delete-warning">This action cannot be undone. The student record will be permanently removed from the dataset.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="delete-cancel-btn">Cancel</button>
+          <button class="btn btn-danger" id="delete-confirm-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete Student
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom JavaScript Logic -->
+  <script src="js/script.js"></script>
+</body>
+</html>

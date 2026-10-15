@@ -1,0 +1,28 @@
+student_id,student_name,department,math_marks,python_marks,data_science_marks,attendance_pct
+STU101,Aarav Sharma,Computer Science,92.0,88.0,95.0,94.5
+STU102,Diya Patel,Artificial Intelligence,78.0,85.0,82.0,88.0
+STU103,Rohan Verma,Information Technology,65.0,70.0,68.0,81.0
+STU104,Ananya Iyer,Data Science,95.0,96.0,92.0,96.0
+STU105,Kabir Mehta,Computer Science,45.0,52.0,48.0,72.0
+STU106,Ishita Gupta,Artificial Intelligence,88.0,91.0,89.0,90.5
+STU107,Vikram Singh,Information Technology,34.0,62.0,55.0,79.0
+STU108,Sneha Rao,Data Science,72.0,75.0,70.0,85.0
+STU109,Aditya Nair,Computer Science,58.0,64.0,60.0,68.5
+STU110,Pooja Joshi,Artificial Intelligence,84.0,80.0,86.0,92.0
+STU111,Rahul Kulkarni,Information Technology,38.0,35.0,42.0,60.0
+STU112,Meera Nambiar,Data Science,90.0,94.0,91.0,95.0
+STU113,Siddharth Das,Computer Science,76.0,72.0,79.0,83.5
+STU114,Tanvi Sen,Artificial Intelligence,62.0,68.0,64.0,74.0
+STU115,Arjun Reddy,Information Technology,89.0,87.0,90.0,91.0
+STU116,Riya Kapoor,Data Science,54.0,58.0,52.0,77.5
+STU117,Varun Chopra,Computer Science,30.0,45.0,40.0,65.0
+STU118,Kavya Menon,Artificial Intelligence,94.0,92.0,96.0,98.0
+STU119,Nikhil Jain,Information Technology,70.0,74.0,72.0,82.0
+STU120,Priya Saxena,Data Science,81.0,85.0,80.0,89.5
+STU121,Ayush Mishra,Computer Science,68.0,66.0,71.0,80.0
+STU122,Simran Kaur,Artificial Intelligence,42.0,48.0,45.0,71.5
+STU123,Harsh Vardhan,Information Technology,91.0,89.0,93.0,93.0
+STU124,Neha Bhatt,Data Science,35.0,50.0,48.0,70.0
+STU125,Karan Malhotra,Computer Science,83.0,86.0,81.0,87.0
+STU126,Bhavna Deshmukh,Artificial Intelligence,75.0,79.0,77.0,84.0
+STU127,harshit,Computer Science,99.0,98.0,99.0,95.0

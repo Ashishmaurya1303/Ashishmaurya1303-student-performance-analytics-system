@@ -4,8 +4,11 @@ Connects the existing Python, Pandas, and NumPy analytics pipeline to the web da
 serving both JSON REST API endpoints and static frontend assets from the same origin.
 """
 
+import os
 from pathlib import Path
+import shutil
 import sys
+import tempfile
 from typing import Optional
 from flask import Flask, jsonify, request, send_from_directory
 
@@ -29,6 +32,38 @@ from src.analytics import (
 )
 
 
+def _resolve_writable_csv_path(base_csv: Path) -> Path:
+    """Resolve a guaranteed-writable CSV path, adapting to Vercel/serverless environments."""
+    is_serverless = bool(
+        os.environ.get("VERCEL")
+        or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
+        or os.environ.get("VERCEL_ENV")
+    )
+    if is_serverless:
+        tmp_csv = Path(tempfile.gettempdir()) / "students.csv"
+        if not tmp_csv.exists() and base_csv.exists():
+            try:
+                shutil.copyfile(base_csv, tmp_csv)
+            except Exception:
+                pass
+        return tmp_csv if tmp_csv.exists() else base_csv
+
+    # On local systems, test if base_csv is writable
+    try:
+        if base_csv.exists():
+            with open(base_csv, "a"):
+                pass
+        return base_csv
+    except (OSError, PermissionError):
+        tmp_csv = Path(tempfile.gettempdir()) / "students.csv"
+        if not tmp_csv.exists() and base_csv.exists():
+            try:
+                shutil.copyfile(base_csv, tmp_csv)
+            except Exception:
+                pass
+        return tmp_csv if tmp_csv.exists() else base_csv
+
+
 def create_app(custom_csv_path: Optional[Path] = None) -> Flask:
     """Application factory for Flask analytics API."""
     app = Flask(
@@ -37,15 +72,23 @@ def create_app(custom_csv_path: Optional[Path] = None) -> Flask:
         static_url_path="",
     )
 
-    # Dataset path resolution
+    # Dataset path resolution with serverless write-support
     default_csv = PROJECT_ROOT / "data" / "students.csv"
-    app.config["CSV_PATH"] = custom_csv_path or default_csv
+    app.config["DEFAULT_CSV_PATH"] = default_csv
+    app.config["CSV_PATH"] = custom_csv_path or _resolve_writable_csv_path(default_csv)
 
     def get_processed_data():
         """Load, clean, and enrich dataset using existing Python logic."""
         csv_path = Path(app.config["CSV_PATH"])
         if not csv_path.exists():
-            raise FileNotFoundError(f"Dataset CSV file not found at '{csv_path.name}'.")
+            default_csv = Path(app.config.get("DEFAULT_CSV_PATH", PROJECT_ROOT / "data" / "students.csv"))
+            if default_csv.exists():
+                try:
+                    shutil.copyfile(default_csv, csv_path)
+                except Exception:
+                    csv_path = default_csv
+            else:
+                raise FileNotFoundError(f"Dataset CSV file not found at '{csv_path.name}'.")
         raw_df = load_data(csv_path)
         clean_df = clean_data(raw_df)
         enriched_df = enrich_student_dataset(clean_df)
@@ -314,20 +357,33 @@ def create_app(custom_csv_path: Optional[Path] = None) -> Flask:
     # -----------------------------------------------------------------
 
     def _save_raw_dataframe_to_csv(raw_df: 'pd.DataFrame') -> None:
-        """Persist the raw DataFrame (without enriched columns) back to the CSV file."""
+        """Persist the raw DataFrame back to CSV with serverless read-only fallback."""
         csv_path = Path(app.config["CSV_PATH"])
         raw_columns = [
             "student_id", "student_name", "department",
             "math_marks", "python_marks", "data_science_marks", "attendance_pct"
         ]
         save_df = raw_df[raw_columns].copy()
-        save_df.to_csv(csv_path, index=False)
+        try:
+            save_df.to_csv(csv_path, index=False)
+        except (OSError, PermissionError):
+            # Fallback for Vercel/AWS Lambda read-only filesystem
+            tmp_csv = Path(tempfile.gettempdir()) / "students.csv"
+            save_df.to_csv(tmp_csv, index=False)
+            app.config["CSV_PATH"] = tmp_csv
 
     def _get_raw_dataframe() -> 'pd.DataFrame':
         """Load and clean the dataset (without enrichment) for modification."""
         csv_path = Path(app.config["CSV_PATH"])
         if not csv_path.exists():
-            raise FileNotFoundError(f"Dataset CSV file not found at '{csv_path.name}'.")
+            default_csv = Path(app.config.get("DEFAULT_CSV_PATH", PROJECT_ROOT / "data" / "students.csv"))
+            if default_csv.exists():
+                try:
+                    shutil.copyfile(default_csv, csv_path)
+                except Exception:
+                    csv_path = default_csv
+            else:
+                raise FileNotFoundError(f"Dataset CSV file not found at '{csv_path.name}'.")
         raw_df = load_data(csv_path)
         cleaned_df = clean_data(raw_df)
         return cleaned_df

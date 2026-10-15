@@ -148,8 +148,8 @@ def build_pdf():
         ["Assignment:", "Course Mini Project"],
         ["Version:", "1.0.0 (Production Ready)"],
         ["Technologies:", "Python 3.12, Pandas, NumPy, CSV"],
-        ["Repository:", "[GitHub Repository URL Placeholder — To be inserted upon upload]"],
-        ["Author:", "[Author Name Placeholder — As provided during submission]"],
+        ["Repository:", "https://github.com/Ashishmaurya1303/Ashishmaurya1303-student-performance-analytics-system"],
+        ["Author:", "Ashish Maurya (Ashishmaurya1303)"],
         ["Date:", "October 2026"],
     ]
     meta_table = Table(meta_data, colWidths=[120, 320])
@@ -316,39 +316,51 @@ def build_pdf():
     elements.append(PageBreak())
 
     # ==================== 12. SCREENSHOTS ====================
-    elements.append(Paragraph("12. Actual Program Output Screenshots", h1_style))
+    elements.append(Paragraph("12. Actual Program Output & Web Dashboard Screenshots", h1_style))
     elements.append(Paragraph(
-        "Below are authentic terminal captures from the application running on Windows PowerShell:",
+        "Below are authentic captures from the live interactive analytics dashboard running on the Python Flask & Pandas backend:",
         body_style
     ))
 
-    roster_img_path = SCREENSHOTS_DIR / "screenshot_roster.png"
-    if roster_img_path.exists():
-        elements.append(RLImage(str(roster_img_path), width=500, height=220))
-        elements.append(Paragraph("Figure 1: Authentic Student Performance Roster Table (main.py)", caption_style))
+    overview_img = SCREENSHOTS_DIR / "dashboard_overview.png"
+    if overview_img.exists():
+        elements.append(RLImage(str(overview_img), width=480, height=222))
+        elements.append(Paragraph("Figure 1: Executive Summary & Live KPI Overview (Total: 29, Pass: 24, Fail: 5, Class Avg: 72.69%)", caption_style))
 
-    insights_img_path = SCREENSHOTS_DIR / "screenshot_insights.png"
-    if insights_img_path.exists():
-        elements.append(RLImage(str(insights_img_path), width=500, height=220))
-        elements.append(Paragraph("Figure 2: Top Performers, Class Extremes, and Attendance Advisories (main.py)", caption_style))
+    vis1_img = SCREENSHOTS_DIR / "dashboard_visualizations_1.png"
+    if vis1_img.exists():
+        elements.append(RLImage(str(vis1_img), width=480, height=190))
+        elements.append(Paragraph("Figure 2: Subject-Wise Class Averages & Academic Outcomes Pass/Fail Distribution", caption_style))
 
     elements.append(PageBreak())
 
-    test_img_path = SCREENSHOTS_DIR / "screenshot_tests.png"
-    if test_img_path.exists():
-        elements.append(Paragraph("12b. Automated Test Suite Execution Screenshot", h2_style))
-        elements.append(RLImage(str(test_img_path), width=500, height=230))
-        elements.append(Paragraph("Figure 3: All 27 Unit and End-to-End Tests Passing Cleanly", caption_style))
+    vis2_img = SCREENSHOTS_DIR / "dashboard_visualizations_2.png"
+    if vis2_img.exists():
+        elements.append(RLImage(str(vis2_img), width=480, height=192))
+        elements.append(Paragraph("Figure 3: Department-Wise Average Performance & 7-Tier Grade Distribution (A+ to F)", caption_style))
+
+    honor_img = SCREENSHOTS_DIR / "dashboard_honor_roll.png"
+    if honor_img.exists():
+        elements.append(RLImage(str(honor_img), width=480, height=192))
+        elements.append(Paragraph("Figure 4: Honor Roll (Top 3 Performers) & Cohort Extremes Spotlight (harshit, Rahul Kulkarni, Varun Chopra)", caption_style))
+
+    elements.append(PageBreak())
+
+    records_img = SCREENSHOTS_DIR / "dashboard_student_records.png"
+    if records_img.exists():
+        elements.append(RLImage(str(records_img), width=480, height=192))
+        elements.append(Paragraph("Figure 5: Master Student Records Table with Real-Time Search, Filtering, and Pagination", caption_style))
 
     # ==================== 13. RESULTS & DISCUSSION ====================
     elements.append(Paragraph("13. Results and Discussion", h1_style))
     elements.append(Paragraph(
-        "The application executed against the 26-student cohort dataset with 100% reliability:<br/>"
-        "• <b>Total Students:</b> 26 | <b>Passed:</b> 22 (84.62%) | <b>Failed:</b> 4 (15.38%)<br/>"
-        "• <b>Overall Class Average:</b> 71.10%<br/>"
-        "• <b>Subject Averages:</b> Python (72.73%), Data Science (71.77%), Mathematics (68.81%)<br/>"
-        "• <b>Honor Roll (#1):</b> Ananya Iyer (STU104, Data Science) with 94.33% average (Grade A+)<br/>"
-        "• <b>Attendance Shortages:</b> 7 students (26.92%) flagged with attendance &lt; 75.0%.",
+        "The application executed against the 29-student cohort dataset with 100% calculation fidelity:<br/>"
+        "• <b>Total Students:</b> 29 | <b>Passed:</b> 24 (82.76%) | <b>Failed:</b> 5 (17.24%)<br/>"
+        "• <b>Overall Class Average:</b> 72.69%<br/>"
+        "• <b>Subject Averages:</b> Python Programming (74.76%), Data Science (72.03%), Mathematics (71.28%)<br/>"
+        "• <b>Honor Roll (#1):</b> harshit (STU127, Computer Science) with 98.67% average (Grade A+)<br/>"
+        "• <b>Class Extremes:</b> Highest: harshit (98.67%) | Lowest: Rahul Kulkarni & Varun Chopra (38.33%)<br/>"
+        "• <b>Attendance Shortages:</b> 8 students (27.59%) flagged with attendance &lt; 75.0%.",
         body_style
     ))
 
@@ -377,8 +389,9 @@ def build_pdf():
 
     elements.append(Paragraph("17. GitHub Repository & Submission Information", h1_style))
     elements.append(Paragraph(
-        "<b>Repository URL Placeholder:</b> [Insert your public GitHub URL here after running git push]<br/>"
-        "<b>Course Form:</b> [Submit the GitHub URL through the official course Google Form link provided in your LMS].",
+        "<b>GitHub Repository:</b> <font color='#2B6CB0'>https://github.com/Ashishmaurya1303/Ashishmaurya1303-student-performance-analytics-system</font><br/>"
+        "<b>Author:</b> Ashish Maurya<br/>"
+        "<b>Course Submission:</b> Python with AI Mini Project.",
         body_style
     ))
 

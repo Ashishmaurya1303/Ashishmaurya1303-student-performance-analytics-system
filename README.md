@@ -2,6 +2,10 @@
 
 A Python, Pandas, and NumPy mini project developed for the **Python with AI** course.
 
+> 📚 **Complete Project Documentation**:
+> - 📄 **Compiled PDF Report**: [`Project_Documentation.pdf`](Project_Documentation.pdf)
+> - 📝 **Detailed Technical Documentation**: [`Project_Documentation.md`](Project_Documentation.md)
+
 ---
 
 ## 1. Project Overview & Objective
